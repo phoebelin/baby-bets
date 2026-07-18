@@ -309,9 +309,9 @@ begin
   if not verify_admin(p_passcode) then
     raise exception 'Wrong passcode';
   end if;
-  delete from trivia_answers;
-  delete from bets;
-  delete from players;
+  delete from trivia_answers where true;
+  delete from bets where true;
+  delete from players where true;
   update game_state
      set betting_open = true,
          trivia_open = false,
