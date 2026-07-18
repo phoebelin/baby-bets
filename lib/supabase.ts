@@ -7,7 +7,9 @@ export const supabaseConfigured = Boolean(url && anonKey);
 
 // Placeholder values keep the client constructible before env vars are set;
 // pages check `supabaseConfigured` and show setup instructions instead of calling out.
+// GitHub Actions passes unset vars as empty strings, not undefined — `||`
+// (not `??`) is required so those also fall through to the placeholder.
 export const supabase = createClient(
-  url ?? "https://placeholder.supabase.co",
-  anonKey ?? "placeholder-anon-key"
+  url || "https://placeholder.supabase.co",
+  anonKey || "placeholder-anon-key"
 );
