@@ -47,8 +47,9 @@ export default function MarketPage() {
         {loaded ? (
           <>
             <OddsBar pools={pools} />
-            <p className="mt-3 flex items-center justify-center gap-1 text-center text-xs text-ink-soft">
-              {pools.total} <Coins className="h-3 w-3" aria-hidden /> in the
+            <p className="mt-3 text-center text-xs text-ink-soft">
+              {pools.total}{" "}
+              <Coins className="inline h-3 w-3 -mt-0.5" aria-hidden /> in the
               pot · winners split the losing side
             </p>
           </>
@@ -246,11 +247,11 @@ function BetForm({ player, pools }: { player: Player; pools: Pools }) {
       </div>
 
       {side && (
-        <p className="mt-3 flex items-center justify-center gap-1 text-center text-xs text-ink-soft">
+        <p className="mt-3 text-center text-xs text-ink-soft">
           If {SIDE_META[side].label} wins, this bet returns about{" "}
-          <span className="inline-flex items-center gap-1 font-semibold text-ink">
+          <span className="font-semibold text-ink">
             {projectedReturn(pools, side, clamped)}{" "}
-            <Coins className="h-3 w-3" aria-hidden />
+            <Coins className="inline h-3 w-3 -mt-0.5" aria-hidden />
           </span>{" "}
           at current odds.
         </p>
@@ -258,7 +259,7 @@ function BetForm({ player, pools }: { player: Player; pools: Pools }) {
 
       {error && <p className="mt-3 text-center text-sm text-oops">{error}</p>}
       {placed && !error && (
-        <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-sm font-semibold text-leaf pop-in">
+        <p className="mt-3 text-center text-sm font-semibold text-leaf pop-in">
           Bet placed: {placed.amount} on <SideDot side={placed.side} />{" "}
           {SIDE_META[placed.side].label}
         </p>

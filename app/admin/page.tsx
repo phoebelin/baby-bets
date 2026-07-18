@@ -247,9 +247,9 @@ function Dashboard({
       <Card>
         <p className="mb-3 font-display text-lg font-semibold">The pot</p>
         <OddsBar pools={pools} />
-        <p className="mt-2 flex items-center justify-center gap-1 text-center text-xs text-ink-soft">
-          {pools.total} <Coins className="h-3 w-3" aria-hidden /> total from{" "}
-          {overview?.players.length ?? 0} players
+        <p className="mt-2 text-center text-xs text-ink-soft">
+          {pools.total} <Coins className="inline h-3 w-3 -mt-0.5" aria-hidden />{" "}
+          total from {overview?.players.length ?? 0} players
         </p>
       </Card>
 

@@ -144,10 +144,10 @@ export default function TriviaPage() {
           <p className="mt-2 font-display font-semibold">
             Trivia isn&apos;t open right now
           </p>
-          <p className="mt-1 flex flex-wrap items-center justify-center gap-1 text-center text-sm text-ink-soft">
+          <p className="mt-1 text-center text-sm text-ink-soft">
             The host opens it during the party. Every correct answer earns
-            1 <Coins className="h-3.5 w-3.5" aria-hidden /> to bet with —
-            check back soon!
+            1 <Coins className="inline h-3.5 w-3.5 -mt-0.5" aria-hidden /> to
+            bet with — check back soon!
           </p>
         </Card>
       ) : questions === null || idx === null ? (
@@ -166,13 +166,13 @@ export default function TriviaPage() {
           <p className="mt-2 font-display text-xl font-semibold">
             All done!
           </p>
-          <p className="mt-1 flex flex-wrap items-center justify-center gap-1 text-center text-sm text-ink-soft">
+          <p className="mt-1 text-center text-sm text-ink-soft">
             You got{" "}
             <span className="font-bold text-ink">
               {correctCount} of {questions.length}
             </span>{" "}
             right and earned {correctCount}{" "}
-            <Coins className="h-3.5 w-3.5" aria-hidden />.
+            <Coins className="inline h-3.5 w-3.5 -mt-0.5" aria-hidden />.
           </p>
           <PillLink
             href="/market"
