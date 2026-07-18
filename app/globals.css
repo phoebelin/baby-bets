@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #faf6f0;
+  --color-card: #fffdf9;
+  --color-ink: #33302c;
+  --color-ink-soft: #7a746b;
+  --color-line: #ece4d8;
+  --color-blush: #f0a3ba;
+  --color-blush-deep: #d97799;
+  --color-blush-soft: #fbe9ef;
+  --color-sky: #8db9e2;
+  --color-sky-deep: #5b8fc4;
+  --color-sky-soft: #e8f1fa;
+  --color-gold: #dfa93d;
+  --color-gold-soft: #faf0da;
+  --color-leaf: #7fae7a;
+  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --shadow-soft: 0 12px 32px -14px rgb(64 48 44 / 0.22);
+  --shadow-lift: 0 4px 14px -6px rgb(64 48 44 / 0.25);
+}
+
+body {
+  background-color: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---- falling petals (Partiful-style ambience) ---- */
+
+@keyframes petal-fall {
+  0% {
+    transform: translate3d(0, -8vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(var(--sway, 4vw), 108vh, 0) rotate(var(--spin, 260deg));
+    opacity: 0.5;
+  }
+}
+
+.petal {
+  position: absolute;
+  top: -8vh;
+  border-radius: 100% 4px 100% 4px;
+  animation: petal-fall linear infinite;
+  will-change: transform;
+}
+
+/* ---- reveal confetti ---- */
+
+@keyframes confetti-fall {
+  0% {
+    transform: translate3d(0, -10vh, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--sway, 3vw), 105vh, 0) rotate(var(--spin, 720deg));
+    opacity: 0.85;
+  }
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -10vh;
+  animation: confetti-fall ease-in infinite;
+  will-change: transform;
+}
+
+/* ---- little moments ---- */
+
+@keyframes pop-in {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.pop-in {
+  animation: pop-in 0.45s cubic-bezier(0.24, 1.4, 0.42, 1) both;
+}
+
+@keyframes coin-float {
+  0% {
+    transform: translateY(6px) scale(0.8);
+    opacity: 0;
+  }
+  20% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-28px) scale(1);
+    opacity: 0;
+  }
+}
+
+.coin-float {
+  animation: coin-float 1.6s ease-out both;
+}
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.85;
+  }
+}
+
+.soft-pulse {
+  animation: soft-pulse 2.4s ease-in-out infinite;
+}
