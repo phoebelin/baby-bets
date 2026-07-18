@@ -1,14 +1,15 @@
 "use client";
 
+import { Check, Coins, Medal, Trophy } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NotConfigured } from "@/components/not-configured";
 import { TopBar } from "@/components/top-bar";
-import { Card } from "@/components/ui";
+import { Card, SideDot } from "@/components/ui";
 import { usePlayer } from "@/lib/player-context";
 import { supabase, supabaseConfigured } from "@/lib/supabase";
 import type { Bet, Player, TriviaAnswer } from "@/lib/types";
 
-const MEDALS = ["🥇", "🥈", "🥉"];
+const MEDAL_COLORS = ["#dfa93d", "#a9a9a9", "#c98a4b"];
 
 interface Row extends Player {
   boyStake: number;
@@ -89,7 +90,11 @@ export default function LeaderboardPage() {
     <main className="relative z-10 flex flex-col gap-4">
       <TopBar title="Leaderboard" />
       {rows === null ? (
-        <div className="mt-10 text-center text-3xl soft-pulse">🏆</div>
+        <Trophy
+          className="mx-auto mt-10 h-9 w-9 text-ink-soft soft-pulse"
+          strokeWidth={1.5}
+          aria-hidden
+        />
       ) : rows.length === 0 ? (
         <Card className="text-center text-sm text-ink-soft">
           Nobody has joined yet — be the first!
@@ -99,6 +104,32 @@ export default function LeaderboardPage() {
           <ul className="flex flex-col">
             {rows.map((row, i) => {
               const isMe = player?.id === row.id;
+              const summary: React.ReactNode[] = [];
+              if (row.triviaCorrect > 0) {
+                summary.push(
+                  <span
+                    key="trivia"
+                    className="inline-flex items-center gap-1"
+                  >
+                    {row.triviaCorrect} trivia{" "}
+                    <Check className="h-3 w-3" aria-hidden />
+                  </span>
+                );
+              }
+              if (row.boyStake > 0) {
+                summary.push(
+                  <span key="boy" className="inline-flex items-center gap-1">
+                    {row.boyStake} on <SideDot side="boy" />
+                  </span>
+                );
+              }
+              if (row.girlStake > 0) {
+                summary.push(
+                  <span key="girl" className="inline-flex items-center gap-1">
+                    {row.girlStake} on <SideDot side="girl" />
+                  </span>
+                );
+              }
               return (
                 <li
                   key={row.id}
@@ -106,8 +137,14 @@ export default function LeaderboardPage() {
                     isMe ? "bg-gold-soft" : ""
                   }`}
                 >
-                  <span className="w-8 text-center text-lg">
-                    {MEDALS[i] ?? (
+                  <span className="flex w-8 justify-center">
+                    {i < 3 ? (
+                      <Medal
+                        className="h-5 w-5"
+                        style={{ color: MEDAL_COLORS[i] }}
+                        aria-hidden
+                      />
+                    ) : (
                       <span className="text-sm text-ink-soft">{i + 1}</span>
                     )}
                   </span>
@@ -116,19 +153,18 @@ export default function LeaderboardPage() {
                       {row.name}
                       {isMe && " (you)"}
                     </span>
-                    <span className="block text-xs text-ink-soft">
-                      {[
-                        row.triviaCorrect > 0 &&
-                          `${row.triviaCorrect} trivia ✓`,
-                        row.boyStake > 0 && `${row.boyStake}🪙 on 💙`,
-                        row.girlStake > 0 && `${row.girlStake}🪙 on 🩷`,
-                      ]
-                        .filter(Boolean)
-                        .join(" · ") || "just getting started"}
+                    <span className="flex flex-wrap items-center gap-x-2 text-xs text-ink-soft">
+                      {summary.length > 0
+                        ? summary.flatMap((node, idx) =>
+                            idx === 0
+                              ? [node]
+                              : [<span key={`sep-${idx}`}>·</span>, node]
+                          )
+                        : "just getting started"}
                     </span>
                   </span>
-                  <span className="font-display text-lg font-bold">
-                    {row.coins} 🪙
+                  <span className="flex items-center gap-1 font-display text-lg font-bold">
+                    {row.coins} <Coins className="h-4 w-4" aria-hidden />
                   </span>
                 </li>
               );

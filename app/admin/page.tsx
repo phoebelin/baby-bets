@@ -1,10 +1,11 @@
 "use client";
 
+import { Coins, KeyRound, PartyPopper, RotateCcw } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { NotConfigured } from "@/components/not-configured";
 import { OddsBar } from "@/components/odds-bar";
 import { TopBar } from "@/components/top-bar";
-import { Card, Pill } from "@/components/ui";
+import { Card, Pill, SideDot } from "@/components/ui";
 import { computePools } from "@/lib/odds";
 import { usePlayer } from "@/lib/player-context";
 import { supabase, supabaseConfigured } from "@/lib/supabase";
@@ -57,7 +58,7 @@ function PasscodeGate({ onUnlock }: { onUnlock: (pass: string) => void }) {
       setBusy(false);
       if (rpcError || data !== true) {
         sessionStorage.removeItem(PASS_KEY);
-        if (!silent) setError("That's not the passcode 🤔");
+        if (!silent) setError("That's not the passcode");
         return;
       }
       sessionStorage.setItem(PASS_KEY, pass);
@@ -80,15 +81,18 @@ function PasscodeGate({ onUnlock }: { onUnlock: (pass: string) => void }) {
         }}
         className="flex flex-col gap-3"
       >
-        <p className="font-display text-lg font-semibold">Hosts only 🤫</p>
+        <p className="flex items-center gap-2 font-display text-lg font-semibold">
+          <KeyRound className="h-5 w-5 text-ink-soft" aria-hidden />
+          Hosts only
+        </p>
         <input
           type="password"
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder="Admin passcode"
-          className="rounded-2xl border border-line bg-cream px-4 py-3.5 text-base outline-none focus:border-blush"
+          className="rounded-2xl border border-line bg-cream px-4 py-3.5 text-base outline-none focus:border-accent"
         />
-        {error && <p className="text-sm text-blush-deep">{error}</p>}
+        {error && <p className="text-sm text-oops">{error}</p>}
         <Pill
           type="submit"
           disabled={!value || busy}
@@ -115,12 +119,13 @@ function Dashboard({
   passcode: string;
   onLock: () => void;
 }) {
-  const { gameState } = usePlayer();
+  const { gameState, leave } = usePlayer();
   const [overview, setOverview] = useState<Overview | null>(null);
   const [busyAction, setBusyAction] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [revealSide, setRevealSide] = useState<Side | null>(null);
   const [confirming, setConfirming] = useState(false);
+  const [resetConfirming, setResetConfirming] = useState(false);
 
   const fetchOverview = useCallback(async () => {
     const [{ data: players }, { data: bets }, { data: answers }, { data: qs }] =
@@ -152,12 +157,12 @@ function Dashboard({
       )
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "bets" },
+        { event: "*", schema: "public", table: "bets" },
         fetchOverview
       )
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "trivia_answers" },
+        { event: "*", schema: "public", table: "trivia_answers" },
         fetchOverview
       )
       .subscribe();
@@ -197,6 +202,25 @@ function Dashboard({
     fetchOverview();
   };
 
+  const resetGame = async () => {
+    if (busyAction) return;
+    setBusyAction("reset");
+    setError(null);
+    const { error: rpcError } = await supabase.rpc("admin_reset_game", {
+      p_passcode: passcode,
+    });
+    if (rpcError) {
+      setError(rpcError.message);
+    } else {
+      setRevealSide(null);
+      setConfirming(false);
+      leave();
+      await fetchOverview();
+    }
+    setResetConfirming(false);
+    setBusyAction(null);
+  };
+
   const pools = computePools(overview?.bets ?? []);
 
   return (
@@ -217,27 +241,31 @@ function Dashboard({
             onToggle={() => toggle("trivia_open")}
           />
         </div>
-        {error && <p className="mt-3 text-sm text-blush-deep">{error}</p>}
+        {error && <p className="mt-3 text-sm text-oops">{error}</p>}
       </Card>
 
       <Card>
         <p className="mb-3 font-display text-lg font-semibold">The pot</p>
         <OddsBar pools={pools} />
-        <p className="mt-2 text-center text-xs text-ink-soft">
-          {pools.total} 🪙 total from {overview?.players.length ?? 0} players
+        <p className="mt-2 flex items-center justify-center gap-1 text-center text-xs text-ink-soft">
+          {pools.total} <Coins className="h-3 w-3" aria-hidden /> total from{" "}
+          {overview?.players.length ?? 0} players
         </p>
       </Card>
 
       <Card
         className={gameState?.revealed ? "" : "border-gold/50 bg-gold-soft"}
       >
-        <p className="mb-2 font-display text-lg font-semibold">
-          {gameState?.revealed ? "Revealed 🎉" : "The Big Reveal"}
+        <p className="mb-2 flex items-center gap-2 font-display text-lg font-semibold">
+          {gameState?.revealed && (
+            <PartyPopper className="h-5 w-5 text-gold" aria-hidden />
+          )}
+          {gameState?.revealed ? "Revealed" : "The Big Reveal"}
         </p>
         {gameState?.revealed && gameState.actual_gender ? (
-          <p className="text-sm text-ink-soft">
+          <p className="flex items-center gap-1.5 text-sm text-ink-soft">
             It&apos;s {SIDE_META[gameState.actual_gender].noun}{" "}
-            {SIDE_META[gameState.actual_gender].emoji} — payouts are settled.
+            <SideDot side={gameState.actual_gender} /> — payouts are settled.
           </p>
         ) : (
           <>
@@ -253,15 +281,15 @@ function Dashboard({
                     setRevealSide(s);
                     setConfirming(false);
                   }}
-                  className={`rounded-2xl border-2 px-4 py-3 font-semibold transition-transform active:scale-95 ${
+                  className={`flex items-center justify-center gap-2 rounded-2xl border-2 px-4 py-3 font-semibold transition-transform active:scale-95 ${
                     revealSide === s
                       ? s === "boy"
-                        ? "border-sky-deep bg-sky-soft"
-                        : "border-blush-deep bg-blush-soft"
+                        ? "border-boy-deep bg-boy-soft"
+                        : "border-girl-deep bg-girl-soft"
                       : "border-line bg-card"
                   }`}
                 >
-                  {SIDE_META[s].emoji} {SIDE_META[s].label}
+                  <SideDot side={s} /> {SIDE_META[s].label}
                 </button>
               ))}
             </div>
@@ -286,9 +314,9 @@ function Dashboard({
                 <Pill
                   onClick={reveal}
                   disabled={busyAction === "reveal"}
-                  className="flex-1 bg-blush-deep py-3 text-white shadow-lift"
+                  className="flex-1 bg-oops py-3 text-white shadow-lift"
                 >
-                  {busyAction === "reveal" ? "Revealing…" : "Yes — reveal! 🎉"}
+                  {busyAction === "reveal" ? "Revealing…" : "Yes — reveal!"}
                 </Pill>
               </div>
             )}
@@ -310,9 +338,15 @@ function Dashboard({
               <thead>
                 <tr className="text-xs uppercase tracking-wide text-ink-soft">
                   <th className="px-2 py-2 font-medium">Player</th>
-                  <th className="px-2 py-2 text-right font-medium">🪙</th>
-                  <th className="px-2 py-2 text-right font-medium">💙</th>
-                  <th className="px-2 py-2 text-right font-medium">🩷</th>
+                  <th className="px-2 py-2 text-right font-medium">
+                    <Coins className="ml-auto h-3.5 w-3.5" aria-hidden />
+                  </th>
+                  <th className="px-2 py-2 text-right font-medium">
+                    <SideDot side="boy" className="ml-auto" />
+                  </th>
+                  <th className="px-2 py-2 text-right font-medium">
+                    <SideDot side="girl" className="ml-auto" />
+                  </th>
                   <th className="px-2 py-2 text-right font-medium">Trivia</th>
                 </tr>
               </thead>
@@ -351,6 +385,42 @@ function Dashboard({
                 })}
               </tbody>
             </table>
+          </div>
+        )}
+      </Card>
+
+      <Card className="border-oops/30">
+        <p className="mb-1 font-display text-lg font-semibold text-oops">
+          Danger zone
+        </p>
+        <p className="mb-3 text-xs text-ink-soft">
+          Wipes every player, bet, and trivia answer, and resets betting/
+          trivia to their starting state. Use this to clear out testing before
+          the party. Cannot be undone.
+        </p>
+        {!resetConfirming ? (
+          <Pill
+            onClick={() => setResetConfirming(true)}
+            className="w-full border border-oops/40 bg-card py-3 text-oops"
+          >
+            <RotateCcw className="h-4 w-4" aria-hidden />
+            Reset all game data
+          </Pill>
+        ) : (
+          <div className="flex gap-2">
+            <Pill
+              onClick={() => setResetConfirming(false)}
+              className="flex-1 border border-line bg-card py-3"
+            >
+              Cancel
+            </Pill>
+            <Pill
+              onClick={resetGame}
+              disabled={busyAction === "reset"}
+              className="flex-1 bg-oops py-3 text-white shadow-lift"
+            >
+              {busyAction === "reset" ? "Wiping…" : "Yes — wipe it all"}
+            </Pill>
           </div>
         )}
       </Card>

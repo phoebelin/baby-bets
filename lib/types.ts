@@ -42,10 +42,7 @@ export interface TriviaAnswer {
   is_correct: boolean;
 }
 
-export const SIDE_META: Record<
-  Side,
-  { label: string; emoji: string; noun: string }
-> = {
-  boy: { label: "Boy", emoji: "💙", noun: "a boy" },
-  girl: { label: "Girl", emoji: "🩷", noun: "a girl" },
+export const SIDE_META: Record<Side, { label: string; noun: string }> = {
+  boy: { label: "Boy", noun: "a boy" },
+  girl: { label: "Girl", noun: "a girl" },
 };

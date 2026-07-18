@@ -1,4 +1,4 @@
-const COLORS = ["#f5c1d1", "#fbdce6", "#c9ddf2", "#f0a3ba", "#e8f1fa"];
+const COLORS = ["#c7e8c0", "#f5e6a8", "#f0c9a0", "#d7ecd0", "#faf0da"];
 
 // Deterministic configs (index math, no Math.random) so SSR and client agree.
 const PETALS = Array.from({ length: 16 }, (_, i) => ({

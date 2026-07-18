@@ -10,7 +10,7 @@
 -- replaced, and the passcode/questions sections say what they do.
 -- ============================================================
 
-create extension if not exists pgcrypto;
+create extension if not exists pgcrypto with schema extensions;
 
 -- ---------- tables ----------
 
@@ -67,7 +67,7 @@ insert into game_state (id) values (1) on conflict do nothing;
 
 -- vvvvvvvvvv CHANGE_ME: pick your admin passcode vvvvvvvvvv
 insert into admin_config (id, passcode_hash)
-values (1, crypt('babybets', gen_salt('bf')))
+values (1, extensions.crypt('babybets', extensions.gen_salt('bf')))
 on conflict (id) do update set passcode_hash = excluded.passcode_hash;
 -- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -104,7 +104,7 @@ returns boolean
 language sql security definer set search_path = public as $$
   select exists (
     select 1 from admin_config
-    where passcode_hash = crypt(p_passcode, passcode_hash)
+    where passcode_hash = extensions.crypt(p_passcode, passcode_hash)
   );
 $$;
 
@@ -300,13 +300,36 @@ begin
 end;
 $$;
 
+-- Admin: wipe every player/bet/answer and reset betting & trivia to their
+-- starting state. For clearing out testing data before the real party.
+create or replace function admin_reset_game(p_passcode text)
+returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  if not verify_admin(p_passcode) then
+    raise exception 'Wrong passcode';
+  end if;
+  delete from trivia_answers;
+  delete from bets;
+  delete from players;
+  update game_state
+     set betting_open = true,
+         trivia_open = false,
+         revealed = false,
+         actual_gender = null,
+         payouts_settled = false
+   where id = 1;
+end;
+$$;
+
 grant execute on function
   verify_admin(text),
   join_game(text),
   place_bet(uuid, text, int),
   submit_answer(uuid, bigint, int),
   admin_update_state(text, boolean, boolean),
-  settle_reveal(text, text)
+  settle_reveal(text, text),
+  admin_reset_game(text)
 to anon, authenticated;
 
 -- ---------- realtime ----------

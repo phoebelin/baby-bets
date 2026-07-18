@@ -1,5 +1,7 @@
+import { Coins } from "lucide-react";
 import Link from "next/link";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { Side } from "@/lib/types";
 
 function cx(...parts: (string | false | null | undefined)[]) {
   return parts.filter(Boolean).join(" ");
@@ -64,8 +66,28 @@ export function CoinBadge({
         className
       )}
     >
-      <span aria-hidden>🪙</span>
+      <Coins className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
       {coins}
     </span>
+  );
+}
+
+/** A small colored swatch marking which side (boy/girl) something belongs to. */
+export function SideDot({
+  side,
+  className,
+}: {
+  side: Side;
+  className?: string;
+}) {
+  return (
+    <span
+      aria-hidden
+      className={cx(
+        "inline-block h-2.5 w-2.5 rounded-full",
+        side === "boy" ? "bg-boy" : "bg-girl",
+        className
+      )}
+    />
   );
 }

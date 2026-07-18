@@ -1,5 +1,15 @@
 "use client";
 
+import {
+  Baby,
+  ChevronRight,
+  Coins,
+  Gift,
+  PartyPopper,
+  TrendingUp,
+  Trophy,
+  type LucideIcon,
+} from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import { NotConfigured } from "@/components/not-configured";
@@ -18,17 +28,21 @@ export default function Home() {
         Phoebe &amp; David&apos;s baby shower
       </p>
       <h1 className="mt-1 text-center font-display text-5xl font-bold">
-        Baby <span className="italic text-blush-deep">Bets</span>
+        Baby <span className="italic text-accent">Bets</span>
       </h1>
       <p className="mx-auto mt-3 max-w-xs text-center text-ink-soft">
         Boy or girl? Put your coins where your gut is — the truth comes out at
-        the big reveal. 💙🩷
+        the big reveal.
       </p>
 
       {!supabaseConfigured ? (
         <NotConfigured />
       ) : !ready ? (
-        <div className="mt-16 text-center text-4xl soft-pulse">🍼</div>
+        <Baby
+          className="mx-auto mt-16 h-10 w-10 text-ink-soft soft-pulse"
+          strokeWidth={1.5}
+          aria-hidden
+        />
       ) : player ? (
         <Hub />
       ) : (
@@ -71,19 +85,24 @@ function JoinForm() {
           placeholder="e.g. Auntie Kim"
           autoComplete="name"
           maxLength={40}
-          className="rounded-2xl border border-line bg-cream px-4 py-3.5 text-base outline-none focus:border-blush"
+          className="rounded-2xl border border-line bg-cream px-4 py-3.5 text-base outline-none focus:border-accent"
         />
-        {error && <p className="text-sm text-blush-deep">{error}</p>}
+        {error && <p className="text-sm text-oops">{error}</p>}
         <Pill
           type="submit"
           disabled={!name.trim() || busy}
           className="bg-ink px-6 py-3.5 text-base text-cream shadow-lift"
         >
-          {busy ? "Joining…" : "Join the game 🎉"}
+          {busy ? "Joining…" : (
+            <>
+              Join the game <PartyPopper className="h-4 w-4" aria-hidden />
+            </>
+          )}
         </Pill>
-        <p className="text-center text-xs text-ink-soft">
-          You start with 2 🪙 — earn more in trivia. Played before? Enter the
-          same name to pick up where you left off.
+        <p className="flex items-center justify-center gap-1 text-center text-xs text-ink-soft">
+          You start with 2 <Coins className="h-3 w-3" aria-hidden /> — earn
+          more in trivia. Played before? Enter the same name to pick up where
+          you left off.
         </p>
       </form>
     </Card>
@@ -102,7 +121,7 @@ function Hub() {
       <Card className="flex items-center justify-between">
         <div>
           <p className="font-display text-lg font-semibold">
-            Hi, {player.name}! 👋
+            Hi, {player.name}!
           </p>
           <p className="text-xs text-ink-soft">Your coin purse</p>
         </div>
@@ -121,7 +140,7 @@ function Hub() {
       {revealed && (
         <NavRow
           href="/reveal"
-          emoji="🎉"
+          icon={PartyPopper}
           title="The reveal is out!"
           subtitle="See the answer and who won big"
           highlight
@@ -129,7 +148,7 @@ function Hub() {
       )}
       <NavRow
         href="/market"
-        emoji="📈"
+        icon={TrendingUp}
         title="The Market"
         subtitle={
           gameState?.betting_open && !revealed
@@ -139,24 +158,24 @@ function Hub() {
       />
       <NavRow
         href="/trivia"
-        emoji="🍼"
+        icon={Baby}
         title="Baby Trivia"
         subtitle={
           gameState?.trivia_open
-            ? "Open now — every correct answer = 1 🪙"
+            ? "Open now — every correct answer earns a coin"
             : "Opens during the party"
         }
       />
       <NavRow
         href="/leaderboard"
-        emoji="🏆"
+        icon={Trophy}
         title="Leaderboard"
         subtitle="Who's sitting on the biggest pile?"
       />
       {!revealed && (
         <NavRow
           href="/reveal"
-          emoji="🎀"
+          icon={Gift}
           title="The Big Reveal"
           subtitle="Keep this open for the moment of truth"
         />
@@ -176,13 +195,13 @@ function Hub() {
 
 function NavRow({
   href,
-  emoji,
+  icon: Icon,
   title,
   subtitle,
   highlight = false,
 }: {
   href: string;
-  emoji: string;
+  icon: LucideIcon;
   title: string;
   subtitle: string;
   highlight?: boolean;
@@ -194,8 +213,8 @@ function NavRow({
         highlight ? "border-gold/50 bg-gold-soft" : "border-line bg-card"
       }`}
     >
-      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cream text-2xl">
-        {emoji}
+      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cream">
+        <Icon className="h-5 w-5 text-ink" strokeWidth={1.75} aria-hidden />
       </span>
       <span className="flex-1">
         <span className="block font-display text-base font-semibold">
@@ -203,7 +222,7 @@ function NavRow({
         </span>
         <span className="block text-xs text-ink-soft">{subtitle}</span>
       </span>
-      <span className="text-ink-soft">›</span>
+      <ChevronRight className="h-4 w-4 text-ink-soft" aria-hidden />
     </Link>
   );
 }

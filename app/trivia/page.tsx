@@ -1,5 +1,14 @@
 "use client";
 
+import {
+  Baby,
+  Check,
+  Coins,
+  GraduationCap,
+  Hourglass,
+  TrendingUp,
+  X,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { NotConfigured } from "@/components/not-configured";
 import { TopBar } from "@/components/top-bar";
@@ -127,35 +136,49 @@ export default function TriviaPage() {
         </Card>
       ) : !triviaOpen && idx !== null && questions && idx < questions.length ? (
         <Card className="text-center">
-          <div className="text-3xl">⏳</div>
+          <Hourglass
+            className="mx-auto h-8 w-8 text-ink-soft"
+            strokeWidth={1.5}
+            aria-hidden
+          />
           <p className="mt-2 font-display font-semibold">
             Trivia isn&apos;t open right now
           </p>
-          <p className="mt-1 text-sm text-ink-soft">
-            The host opens it during the party. Every correct answer earns 1 🪙
-            to bet with — check back soon!
+          <p className="mt-1 flex flex-wrap items-center justify-center gap-1 text-center text-sm text-ink-soft">
+            The host opens it during the party. Every correct answer earns
+            1 <Coins className="h-3.5 w-3.5" aria-hidden /> to bet with —
+            check back soon!
           </p>
         </Card>
       ) : questions === null || idx === null ? (
-        <div className="mt-10 text-center text-3xl soft-pulse">🍼</div>
+        <Baby
+          className="mx-auto mt-10 h-9 w-9 text-ink-soft soft-pulse"
+          strokeWidth={1.5}
+          aria-hidden
+        />
       ) : idx >= questions.length ? (
         <Card className="text-center pop-in">
-          <div className="text-4xl">🎓</div>
+          <GraduationCap
+            className="mx-auto h-10 w-10 text-ink-soft"
+            strokeWidth={1.5}
+            aria-hidden
+          />
           <p className="mt-2 font-display text-xl font-semibold">
             All done!
           </p>
-          <p className="mt-1 text-sm text-ink-soft">
+          <p className="mt-1 flex flex-wrap items-center justify-center gap-1 text-center text-sm text-ink-soft">
             You got{" "}
             <span className="font-bold text-ink">
               {correctCount} of {questions.length}
             </span>{" "}
-            right and earned {correctCount} 🪙.
+            right and earned {correctCount}{" "}
+            <Coins className="h-3.5 w-3.5" aria-hidden />.
           </p>
           <PillLink
             href="/market"
             className="mt-4 bg-ink px-6 py-3 text-cream shadow-lift"
           >
-            Go bet your winnings 📈
+            Go bet your winnings <TrendingUp className="h-4 w-4" aria-hidden />
           </PillLink>
         </Card>
       ) : (
@@ -184,7 +207,7 @@ export default function TriviaPage() {
                   a
                     ? a.is_correct
                       ? "bg-leaf"
-                      : "bg-blush-deep"
+                      : "bg-oops"
                     : i === idx
                       ? "bg-ink"
                       : "bg-line"
@@ -224,9 +247,9 @@ function QuestionCard({
       {answer?.is_correct && (
         <span
           key={coinToast}
-          className="coin-float absolute right-5 top-3 text-lg font-bold text-gold"
+          className="coin-float absolute right-5 top-3 flex items-center gap-1 text-lg font-bold text-gold"
         >
-          +1 🪙
+          +1 <Coins className="h-4 w-4" aria-hidden />
         </span>
       )}
       <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft">
@@ -243,7 +266,7 @@ function QuestionCard({
           if (answer) {
             if (isRight) style = "border-leaf bg-leaf/15";
             else if (isPicked && !answer.is_correct)
-              style = "border-blush-deep bg-blush-soft";
+              style = "border-oops bg-oops-soft";
             else style = "border-line bg-cream opacity-60";
           }
           return (
@@ -251,28 +274,30 @@ function QuestionCard({
               key={i}
               onClick={() => onAnswer(i)}
               disabled={Boolean(answer) || busy}
-              className={`rounded-2xl border-2 px-4 py-3.5 text-left text-sm font-medium transition-transform active:scale-[0.98] ${style}`}
+              className={`flex items-center justify-between gap-2 rounded-2xl border-2 px-4 py-3.5 text-left text-sm font-medium transition-transform active:scale-[0.98] ${style}`}
             >
               {opt}
-              {answer && isRight && " ✓"}
-              {answer && isPicked && !answer.is_correct && " ✗"}
+              {answer && isRight && (
+                <Check className="h-4 w-4 shrink-0 text-leaf" aria-hidden />
+              )}
+              {answer && isPicked && !answer.is_correct && (
+                <X className="h-4 w-4 shrink-0 text-oops" aria-hidden />
+              )}
             </button>
           );
         })}
       </div>
 
-      {error && (
-        <p className="mt-3 text-center text-sm text-blush-deep">{error}</p>
-      )}
+      {error && <p className="mt-3 text-center text-sm text-oops">{error}</p>}
 
       {answer && (
         <div className="mt-4 pop-in">
           <p className="text-center text-sm font-semibold">
             {answer.is_correct
-              ? "Nailed it! +1 🪙"
+              ? "Nailed it! +1 coin"
               : answer.correct_index === undefined
                 ? "You missed this one."
-                : "Oops — not quite."}
+                : "Good grief — not quite."}
           </p>
           <Pill
             onClick={onNext}

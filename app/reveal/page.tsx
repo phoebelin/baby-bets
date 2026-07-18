@@ -1,11 +1,12 @@
 "use client";
 
+import { Crown, Gift, PartyPopper, Trophy } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Confetti } from "@/components/confetti";
 import { NotConfigured } from "@/components/not-configured";
 import { OddsBar } from "@/components/odds-bar";
 import { TopBar } from "@/components/top-bar";
-import { Card, PillLink } from "@/components/ui";
+import { Card, PillLink, SideDot } from "@/components/ui";
 import { usePlayer } from "@/lib/player-context";
 import { supabase, supabaseConfigured } from "@/lib/supabase";
 import { SIDE_META, type Player, type Side } from "@/lib/types";
@@ -58,7 +59,11 @@ export default function RevealPage() {
       <main className="relative z-10 flex flex-col gap-4">
         <TopBar title="The Big Reveal" />
         <Card className="mt-6 text-center">
-          <div className="text-6xl soft-pulse">🎀</div>
+          <Gift
+            className="mx-auto h-14 w-14 text-ink-soft soft-pulse"
+            strokeWidth={1.5}
+            aria-hidden
+          />
           <h2 className="mt-4 font-display text-2xl font-semibold">
             The moment is coming…
           </h2>
@@ -90,12 +95,12 @@ export default function RevealPage() {
       <Card
         className={`mt-4 text-center pop-in ${
           gender === "boy"
-            ? "border-sky-deep/40 bg-sky-soft"
-            : "border-blush-deep/40 bg-blush-soft"
+            ? "border-boy-deep/40 bg-boy-soft"
+            : "border-girl-deep/40 bg-girl-soft"
         }`}
       >
-        <div className="text-7xl">{meta.emoji}</div>
-        <h2 className="mt-3 font-display text-4xl font-bold">
+        <SideDot side={gender} className="mx-auto h-16 w-16" />
+        <h2 className="mt-4 font-display text-4xl font-bold">
           It&apos;s {meta.noun}!
         </h2>
         <p className="mt-2 text-sm text-ink-soft">
@@ -107,17 +112,19 @@ export default function RevealPage() {
       {myResult && (
         <Card className="text-center">
           {myResult.stakeOnWinner > 0 ? (
-            <p className="font-display text-lg font-semibold">
-              You called it! 🎉
+            <p className="flex flex-col items-center gap-1 font-display text-lg font-semibold">
+              <span className="flex items-center gap-1.5">
+                You called it! <PartyPopper className="h-5 w-5" aria-hidden />
+              </span>
               {player && player.reveal_winnings > 0 && (
-                <span className="block text-leaf">
-                  +{player.reveal_winnings} 🪙 winnings
+                <span className="flex items-center gap-1 text-leaf">
+                  +{player.reveal_winnings} winnings
                 </span>
               )}
             </p>
           ) : (
             <p className="font-display text-lg font-semibold">
-              Better luck next baby 😅
+              AAUGH! Better luck next baby.
             </p>
           )}
         </Card>
@@ -130,7 +137,7 @@ export default function RevealPage() {
         {winningPool === 0 ? (
           <p className="text-sm text-ink-soft">
             Not a single coin was on {meta.label} — every stake has been
-            refunded. The baby keeps its mystery to the end. 🍼
+            refunded. The baby keeps its mystery to the end.
           </p>
         ) : winners === null ? (
           <p className="text-sm text-ink-soft">Tallying payouts…</p>
@@ -143,12 +150,19 @@ export default function RevealPage() {
           <ul className="flex flex-col gap-2">
             {winners.map((w, i) => (
               <li key={w.id} className="flex items-center gap-3 text-sm">
-                <span className="w-6 text-center">
-                  {i === 0 ? "👑" : "🎉"}
+                <span className="flex w-6 justify-center">
+                  {i === 0 ? (
+                    <Crown className="h-4 w-4 text-gold" aria-hidden />
+                  ) : (
+                    <PartyPopper
+                      className="h-4 w-4 text-ink-soft"
+                      aria-hidden
+                    />
+                  )}
                 </span>
                 <span className="flex-1 font-semibold">{w.name}</span>
                 <span className="font-bold text-leaf">
-                  +{w.reveal_winnings} 🪙
+                  +{w.reveal_winnings}
                 </span>
               </li>
             ))}
@@ -160,7 +174,7 @@ export default function RevealPage() {
         href="/leaderboard"
         className="mx-auto bg-ink px-6 py-3 text-cream shadow-lift"
       >
-        Final leaderboard 🏆
+        Final leaderboard <Trophy className="h-4 w-4" aria-hidden />
       </PillLink>
     </main>
   );

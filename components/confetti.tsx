@@ -1,8 +1,8 @@
 import type { Side } from "@/lib/types";
 
 const PALETTES: Record<Side, string[]> = {
-  boy: ["#8db9e2", "#5b8fc4", "#c9ddf2", "#e8f1fa", "#dfa93d"],
-  girl: ["#f0a3ba", "#d97799", "#fbdce6", "#fbe9ef", "#dfa93d"],
+  boy: ["#9bcf8f", "#4c8a53", "#c7e8c0", "#e9f5e5", "#dfa93d"],
+  girl: ["#ecd35e", "#a9862a", "#f5e6a8", "#faf3d6", "#dfa93d"],
 };
 
 // Deterministic index math — no Math.random, so hydration stays stable.

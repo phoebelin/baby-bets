@@ -19,7 +19,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Baby Bets · Phoebe & David",
   description:
-    "Place your bets, ace the trivia, and stick around for the big reveal 🍼",
+    "Place your bets, ace the trivia, and stick around for the big reveal",
 };
 
 export const viewport: Viewport = {

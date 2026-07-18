@@ -1,10 +1,11 @@
 "use client";
 
+import { Baby, Coins, Lock, PartyPopper, Wallet } from "lucide-react";
 import { useState } from "react";
 import { NotConfigured } from "@/components/not-configured";
 import { OddsBar } from "@/components/odds-bar";
 import { TopBar } from "@/components/top-bar";
-import { Card, Pill, PillLink } from "@/components/ui";
+import { Card, Pill, PillLink, SideDot } from "@/components/ui";
 import { projectedReturn, type Pools } from "@/lib/odds";
 import { usePlayer } from "@/lib/player-context";
 import { supabase, supabaseConfigured } from "@/lib/supabase";
@@ -46,8 +47,9 @@ export default function MarketPage() {
         {loaded ? (
           <>
             <OddsBar pools={pools} />
-            <p className="mt-3 text-center text-xs text-ink-soft">
-              {pools.total} 🪙 in the pot · winners split the losing side
+            <p className="mt-3 flex items-center justify-center gap-1 text-center text-xs text-ink-soft">
+              {pools.total} <Coins className="h-3 w-3" aria-hidden /> in the
+              pot · winners split the losing side
             </p>
           </>
         ) : (
@@ -69,14 +71,18 @@ export default function MarketPage() {
         player && <BetForm player={player} pools={pools} />
       ) : (
         <Card className="text-center">
-          <div className="text-3xl">🔒</div>
+          <Lock
+            className="mx-auto h-8 w-8 text-ink-soft"
+            strokeWidth={1.5}
+            aria-hidden
+          />
           <p className="mt-2 font-display font-semibold">Betting is closed</p>
           {gameState.revealed ? (
             <PillLink
               href="/reveal"
               className="mt-3 bg-ink px-6 py-3 text-cream shadow-lift"
             >
-              See the reveal 🎉
+              See the reveal <PartyPopper className="h-4 w-4" aria-hidden />
             </PillLink>
           ) : (
             <p className="mt-1 text-sm text-ink-soft">
@@ -93,13 +99,13 @@ export default function MarketPage() {
           </p>
           <div className="flex gap-3">
             {myBoy > 0 && (
-              <span className="rounded-full bg-sky-soft px-4 py-2 text-sm font-semibold text-sky-deep">
-                💙 {myBoy} 🪙 on Boy
+              <span className="flex items-center gap-1.5 rounded-full bg-boy-soft px-4 py-2 text-sm font-semibold text-boy-deep">
+                <SideDot side="boy" /> {myBoy} on Boy
               </span>
             )}
             {myGirl > 0 && (
-              <span className="rounded-full bg-blush-soft px-4 py-2 text-sm font-semibold text-blush-deep">
-                🩷 {myGirl} 🪙 on Girl
+              <span className="flex items-center gap-1.5 rounded-full bg-girl-soft px-4 py-2 text-sm font-semibold text-girl-deep">
+                <SideDot side="girl" /> {myGirl} on Girl
               </span>
             )}
           </div>
@@ -113,11 +119,11 @@ export default function MarketPage() {
           </p>
           <ul className="flex flex-col gap-2">
             {bets.slice(0, 8).map((b) => (
-              <li key={b.id} className="text-sm">
+              <li key={b.id} className="flex items-center gap-1.5 text-sm">
                 <span className="font-semibold">
                   {b.players?.name ?? "Someone"}
-                </span>{" "}
-                put {b.amount} 🪙 on {SIDE_META[b.side].emoji}{" "}
+                </span>
+                put {b.amount} on <SideDot side={b.side} />{" "}
                 {SIDE_META[b.side].label}
               </li>
             ))}
@@ -167,9 +173,13 @@ function BetForm({ player, pools }: { player: Player; pools: Pools }) {
   if (max === 0) {
     return (
       <Card className="text-center">
-        <div className="text-3xl">🫙</div>
+        <Wallet
+          className="mx-auto h-8 w-8 text-ink-soft"
+          strokeWidth={1.5}
+          aria-hidden
+        />
         <p className="mt-2 font-display font-semibold">
-          Your purse is empty!
+          Good grief — your purse is empty!
         </p>
         <p className="mt-1 text-sm text-ink-soft">
           Earn more coins in baby trivia, then come back.
@@ -178,7 +188,7 @@ function BetForm({ player, pools }: { player: Player; pools: Pools }) {
           href="/trivia"
           className="mt-3 bg-ink px-6 py-3 text-cream shadow-lift"
         >
-          Play trivia 🍼
+          Play trivia <Baby className="h-4 w-4" aria-hidden />
         </PillLink>
       </Card>
     );
@@ -198,13 +208,13 @@ function BetForm({ player, pools }: { player: Player; pools: Pools }) {
               className={`rounded-2xl border-2 p-4 text-center transition-transform active:scale-95 ${
                 selected
                   ? s === "boy"
-                    ? "border-sky-deep bg-sky-soft"
-                    : "border-blush-deep bg-blush-soft"
+                    ? "border-boy-deep bg-boy-soft"
+                    : "border-girl-deep bg-girl-soft"
                   : "border-line bg-cream"
               }`}
             >
-              <span className="block text-2xl">{SIDE_META[s].emoji}</span>
-              <span className="block font-display text-lg font-semibold">
+              <SideDot side={s} className="mx-auto h-3.5 w-3.5" />
+              <span className="mt-1 block font-display text-lg font-semibold">
                 {SIDE_META[s].label}
               </span>
               <span className="block text-xs text-ink-soft">{price}¢</span>
@@ -222,8 +232,8 @@ function BetForm({ player, pools }: { player: Player; pools: Pools }) {
         >
           −
         </Pill>
-        <span className="min-w-16 text-center font-display text-3xl font-bold">
-          {clamped} 🪙
+        <span className="flex min-w-16 items-center justify-center gap-1.5 text-center font-display text-3xl font-bold">
+          {clamped} <Coins className="h-5 w-5" aria-hidden />
         </span>
         <Pill
           aria-label="Bet more"
@@ -236,22 +246,21 @@ function BetForm({ player, pools }: { player: Player; pools: Pools }) {
       </div>
 
       {side && (
-        <p className="mt-3 text-center text-xs text-ink-soft">
+        <p className="mt-3 flex items-center justify-center gap-1 text-center text-xs text-ink-soft">
           If {SIDE_META[side].label} wins, this bet returns about{" "}
-          <span className="font-semibold text-ink">
-            {projectedReturn(pools, side, clamped)} 🪙
+          <span className="inline-flex items-center gap-1 font-semibold text-ink">
+            {projectedReturn(pools, side, clamped)}{" "}
+            <Coins className="h-3 w-3" aria-hidden />
           </span>{" "}
           at current odds.
         </p>
       )}
 
-      {error && (
-        <p className="mt-3 text-center text-sm text-blush-deep">{error}</p>
-      )}
+      {error && <p className="mt-3 text-center text-sm text-oops">{error}</p>}
       {placed && !error && (
-        <p className="mt-3 text-center text-sm font-semibold text-leaf pop-in">
-          Bet placed: {placed.amount} 🪙 on {SIDE_META[placed.side].label}{" "}
-          {SIDE_META[placed.side].emoji}
+        <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-sm font-semibold text-leaf pop-in">
+          Bet placed: {placed.amount} on <SideDot side={placed.side} />{" "}
+          {SIDE_META[placed.side].label}
         </p>
       )}
 
@@ -260,11 +269,16 @@ function BetForm({ player, pools }: { player: Player; pools: Pools }) {
         disabled={!side || busy}
         className="mt-4 w-full bg-ink py-3.5 text-base text-cream shadow-lift"
       >
-        {busy
-          ? "Placing…"
-          : side
-            ? `Bet ${clamped} 🪙 on ${SIDE_META[side].label}`
-            : "Pick a side"}
+        {busy ? (
+          "Placing…"
+        ) : side ? (
+          <>
+            Bet {clamped} <Coins className="h-4 w-4" aria-hidden /> on{" "}
+            {SIDE_META[side].label}
+          </>
+        ) : (
+          "Pick a side"
+        )}
       </Pill>
     </Card>
   );
