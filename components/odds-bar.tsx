@@ -13,10 +13,10 @@ export function OddsBar({
     <div>
       <div className="mb-2 flex items-center justify-between font-display text-lg font-semibold">
         <span className="flex items-center gap-1.5 text-boy-deep">
-          <SideDot side="boy" /> Boy · {pools.boyPrice}¢
+          <SideDot side="boy" /> Boy · {pools.boyPrice}%
         </span>
         <span className="flex items-center gap-1.5 text-girl-deep">
-          {pools.girlPrice}¢ · Girl <SideDot side="girl" />
+          {pools.girlPrice}% · Girl <SideDot side="girl" />
         </span>
       </div>
       <div className="flex h-3.5 overflow-hidden rounded-full bg-line">

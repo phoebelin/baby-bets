@@ -105,7 +105,7 @@ export default function RevealPage() {
         </h2>
         <p className="mt-2 text-sm text-ink-soft">
           The crowd had {meta.label} at{" "}
-          {gender === "boy" ? pools.boyPrice : pools.girlPrice}¢.
+          {gender === "boy" ? pools.boyPrice : pools.girlPrice}%.
         </p>
       </Card>
 

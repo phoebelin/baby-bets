@@ -218,7 +218,7 @@ function BetForm({ player, pools }: { player: Player; pools: Pools }) {
               <span className="mt-1 block font-display text-lg font-semibold">
                 {SIDE_META[s].label}
               </span>
-              <span className="block text-xs text-ink-soft">{price}¢</span>
+              <span className="block text-xs text-ink-soft">{price}%</span>
             </button>
           );
         })}

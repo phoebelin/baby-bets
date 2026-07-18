@@ -110,9 +110,7 @@ function JoinForm() {
             1. If you already know the gender, you&apos;re not eligible for
             the cookie prize.
           </li>
-          <li>
-            2. Already a parent? You automatically get a cookie prize.
-          </li>
+          <li>2. All children automatically get a cookie prize.</li>
         </ol>
       </form>
     </Card>
