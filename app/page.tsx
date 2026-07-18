@@ -3,7 +3,6 @@
 import {
   Baby,
   ChevronRight,
-  Coins,
   Gift,
   PartyPopper,
   TrendingUp,
@@ -100,18 +99,19 @@ function JoinForm() {
           )}
         </Pill>
         <p className="text-center text-xs text-ink-soft">
-          You start with 2{" "}
-          <Coins className="inline h-3 w-3 -mt-0.5" aria-hidden /> — earn
-          more in trivia. Played before? Enter the same name to pick up where
-          you left off.
+          You start with 2 coins — earn more in trivia. Played before? Enter
+          the same name to pick up where you left off.
         </p>
-        <ol className="mt-1 flex flex-col gap-1 text-center text-xs text-ink-soft">
-          <li>
-            1. If you already know the gender, you&apos;re not eligible for
-            the cookie prize.
-          </li>
-          <li>2. All children automatically get a cookie prize.</li>
-        </ol>
+        <div className="mt-4 text-left text-xs text-ink-soft">
+          <p className="font-semibold">Additional rules:</p>
+          <ol className="mt-1 flex flex-col gap-1">
+            <li>
+              1. If you already know the gender, you&apos;re not eligible for
+              the cookie prize.
+            </li>
+            <li>2. All children automatically get a cookie prize.</li>
+          </ol>
+        </div>
       </form>
     </Card>
   );
