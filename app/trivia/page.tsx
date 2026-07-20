@@ -167,12 +167,9 @@ export default function TriviaPage() {
             All done!
           </p>
           <p className="mt-1 text-center text-sm text-ink-soft">
-            You got{" "}
-            <span className="font-bold text-ink">
-              {correctCount} of {questions.length}
-            </span>{" "}
-            right and earned {correctCount}{" "}
-            <Coins className="inline h-3.5 w-3.5 -mt-0.5" aria-hidden />.
+            You earned{" "}
+            <span className="font-bold text-ink">{correctCount}</span> bonus
+            coins!
           </p>
           <PillLink
             href="/market"
@@ -297,7 +294,7 @@ function QuestionCard({
               ? "Nailed it! +1 coin"
               : answer.correct_index === undefined
                 ? "You missed this one."
-                : "Good grief — not quite."}
+                : "Ruh roh — not quite."}
           </p>
           <Pill
             onClick={onNext}
